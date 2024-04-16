@@ -20,8 +20,14 @@ To install Enum-Generator:
 2. Fill in the fields for the enum's name, namespace (optional), path (optional), and members.
 3. Click `Generate Enum` to create the enum file and associated ScriptableObject.
 
+See:   https://github.com/salihgireniz1/Enum-Generator/assets/78977599/4836a93e-b046-4363-91a2-e00fd8ab90d3
+
 ## Contributing
 Contributions to the Enum-Generator are welcome. Please feel free to submit pull requests, create issues, or suggest new features.
 
 ## License
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE) file for details.
+
+
+
+
