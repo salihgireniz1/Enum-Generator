@@ -29,8 +29,5 @@ For the most recent updates and patches, check the [Releases](https://github.com
 Contributions to the Enum-Generator are welcome. Please feel free to submit pull requests, create issues, or suggest new features.
 
 ## License
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE) file for details.
-
-
-
-
+This project can be used freely for personal or educational purposes and within organizations as long as it is not sold for profit. 
+For full license details, including the restrictions on the sale of this software, please refer to the [LICENSE.md](LICENSE) file.
