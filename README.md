@@ -22,7 +22,7 @@ For the most recent updates and patches, check the [Releases](https://github.com
 ## Usage
 1. Open the Enum Generator window in the Unity Editor.
 2. Fill in the fields for the enum's name, namespace (optional), path (optional), and members.
-3. Click `Generate Enum` to create the enum file and associated ScriptableObject.
+3. Click `Generate Enum Class` to create the enum file and associated ScriptableObject.
 4. Watch [Tutorial](https://youtu.be/9_8y13uc3Ac) for detailed usage.
 
 ## Contributing
