@@ -4,8 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using UnityEditor;
+using Unity.VisualScripting;
 
-[CreateAssetMenu(fileName = "New Enum Generator", menuName = "Scriptable Objects/Enum Generator")]
+[CreateAssetMenu(fileName = "New Enum Generator", menuName = "Enum Generator")]
 public class EnumGenerator : ScriptableObject
 {
     /// <summary>
@@ -54,12 +55,12 @@ public class EnumGenerator : ScriptableObject
             File.Delete(filePath);
         }
 
-        // Refresh the Asset Database to update the Unity Editor with the file changes.
-        AssetDatabase.Refresh();
-
         // Generate the enum file at the determined file path.
         string filePathToCreate = DetermineFilePath();
         await GenerateEnumFile(filePathToCreate);
+
+        // Refresh the Asset Database to update the Unity Editor with the file changes.
+        AssetDatabase.Refresh();
     }
 
     /// <summary>
@@ -92,38 +93,71 @@ public class EnumGenerator : ScriptableObject
     /// <returns>A task that represents the asynchronous operation of writing the file.</returns>
     private async Task GenerateEnumFile(string filePath)
     {
-        string enumScript = "";
-
-        // Start the namespace block if a namespace is provided.
-        if (!string.IsNullOrEmpty(namespaceName))
-        {
-            enumScript += $"namespace {namespaceName}\n{{\n";
-        }
-
-        // Define the enum with its members.
-        enumScript += $"public enum {enumName} {{\n";
-        for (int i = 0; i < enumMembers.Length; i++)
-        {
-            enumScript += $"\t{enumMembers[i]}" + (i < enumMembers.Length - 1 ? ",\n" : "\n");
-        }
-        enumScript += "}\n";
-
-        // Close the namespace block if it was opened.
-        if (!string.IsNullOrEmpty(namespaceName))
-        {
-            enumScript += "}\n";
-        }
-
-        // Attempt to write the enum file to disk and log the outcome.
+        using FileStream fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None, 4096, true);
+        using StreamWriter streamWriter = new StreamWriter(fileStream);
         try
         {
-            await File.WriteAllTextAsync(filePath, enumScript);
+            bool hasNamespace = !string.IsNullOrEmpty(namespaceName);
+            if (hasNamespace)
+            {
+                await streamWriter.WriteLineAsync($"namespace {namespaceName}");
+                await streamWriter.WriteLineAsync("{");
+            }
+
+            // If namespace exists, put a tab before each line from now on.
+            string namespaceTab = (hasNamespace ? "\t" : "");
+
+            await streamWriter.WriteLineAsync(namespaceTab + $"public enum {enumName}");
+            await streamWriter.WriteLineAsync(namespaceTab + "{");
+            for (int i = 0; i < enumMembers.Length; i++)
+            {
+                await streamWriter.WriteLineAsync(namespaceTab + $"\t{enumMembers[i]}" + (i < enumMembers.Length - 1 ? "," : ""));
+            }
+            await streamWriter.WriteLineAsync(namespaceTab + "}");
+            if (hasNamespace)
+            {
+                await streamWriter.WriteLineAsync("}");
+            }
             Debug.Log($"Enum {enumName} generated successfully at {filePath}");
-            AssetDatabase.Refresh();
+            // AssetDatabase.Refresh();
         }
         catch (Exception e)
         {
             Debug.LogError($"Failed to generate enum {enumName}: {e.Message}");
         }
+
+        // string enumScript = "";
+
+        // // Start the namespace block if a namespace is provided.
+        // if (!string.IsNullOrEmpty(namespaceName))
+        // {
+        //     enumScript += $"namespace {namespaceName}\n{{\n";
+        // }
+
+        // // Define the enum with its members.
+        // enumScript += $"public enum {enumName} {{\n";
+        // for (int i = 0; i < enumMembers.Length; i++)
+        // {
+        //     enumScript += $"\t{enumMembers[i]}" + (i < enumMembers.Length - 1 ? ",\n" : "\n");
+        // }
+        // enumScript += "}\n";
+
+        // // Close the namespace block if it was opened.
+        // if (!string.IsNullOrEmpty(namespaceName))
+        // {
+        //     enumScript += "}\n";
+        // }
+
+        // // Attempt to write the enum file to disk and log the outcome.
+        // try
+        // {
+        //     await File.WriteAllTextAsync(filePath, enumScript);
+        //     Debug.Log($"Enum {enumName} generated successfully at {filePath}");
+        //     AssetDatabase.Refresh();
+        // }
+        // catch (Exception e)
+        // {
+        //     Debug.LogError($"Failed to generate enum {enumName}: {e.Message}");
+        // }
     }
 }
